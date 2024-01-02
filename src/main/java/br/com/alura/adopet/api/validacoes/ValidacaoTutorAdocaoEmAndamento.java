@@ -20,16 +20,13 @@ public class ValidacaoTutorAdocaoEmAndamento implements ValidacaoSolicitacaoAdoc
     @Autowired
     private AdocaoRepository adocaoRepository;
 
-    @Autowired
-    private TutorRepository tutorRepository;
+    public void validar(SolicitacaoAdocaoDTO dto) {
+        boolean tutorPossuiAdocaoEmAvaliacao = adocaoRepository.existsByTutorIdAndStatus(dto.idTutor(),
+                StatusAdocao.AGUARDANDO_AVALIACAO);
 
-    public void validar(SolicitacaoAdocaoDTO dto){
-        Tutor tutor = tutorRepository.getReferenceById(dto.idTutor());
-        List<Adocao> adocoes = adocaoRepository.findAll();
-        for (Adocao a : adocoes) {
-            if (a.getTutor() == tutor && a.getStatus() == StatusAdocao.AGUARDANDO_AVALIACAO) {
-                throw new ValidacaoException("Tutor já possui outra adoção aguardando avaliação!");
-            }
+        if (tutorPossuiAdocaoEmAvaliacao) {
+            throw new ValidacaoException("Tutor já possui outra adoção aguardando avaliação!");
         }
+
     }
 }
