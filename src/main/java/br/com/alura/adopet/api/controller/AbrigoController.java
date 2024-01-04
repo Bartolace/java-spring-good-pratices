@@ -1,8 +1,12 @@
 package br.com.alura.adopet.api.controller;
 
+import br.com.alura.adopet.api.dto.abrigo.CadastroAbrigoDTO;
+import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.AbrigoRepository;
+import br.com.alura.adopet.api.service.AbrigoService;
+import br.com.alura.adopet.api.validacoes.abrigo.ValidacaoCadastraAbrigo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,38 +23,42 @@ public class AbrigoController {
     @Autowired
     private AbrigoRepository repository;
 
+    @Autowired
+    private AbrigoService service;
+
+    @Autowired
+    private List<ValidacaoCadastraAbrigo> validacoes;
+
     @GetMapping
     public ResponseEntity<List<Abrigo>> listar() {
-        return ResponseEntity.ok(repository.findAll());
+        try {
+            return ResponseEntity.ok(repository.findAll());
+        } catch (ValidacaoException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid Abrigo abrigo) {
-        boolean nomeJaCadastrado = repository.existsByNome(abrigo.getNome());
-        boolean telefoneJaCadastrado = repository.existsByTelefone(abrigo.getTelefone());
-        boolean emailJaCadastrado = repository.existsByEmail(abrigo.getEmail());
-
-        if (nomeJaCadastrado || telefoneJaCadastrado || emailJaCadastrado) {
-            return ResponseEntity.badRequest().body("Dados já cadastrados para outro abrigo!");
-        } else {
-            repository.save(abrigo);
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid CadastroAbrigoDTO dto) {
+        try {
+            validacoes.forEach(v -> v.validar(dto));
+            repository.save(new Abrigo(dto));
             return ResponseEntity.ok().build();
+        } catch (ValidacaoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/{idOuNome}/pets")
     public ResponseEntity<List<Pet>> listarPets(@PathVariable String idOuNome) {
         try {
-            Long id = Long.parseLong(idOuNome);
-            List<Pet> pets = repository.getReferenceById(id).getPets();
-            return ResponseEntity.ok(pets);
+            return ResponseEntity.ok(service.listarPetsPorId(idOuNome));
         } catch (EntityNotFoundException enfe) {
             return ResponseEntity.notFound().build();
         } catch (NumberFormatException e) {
             try {
-                List<Pet> pets = repository.findByNome(idOuNome).getPets();
-                return ResponseEntity.ok(pets);
+                return ResponseEntity.ok(service.listarPetsPorNome(idOuNome));
             } catch (EntityNotFoundException enfe) {
                 return ResponseEntity.notFound().build();
             }
@@ -61,22 +69,13 @@ public class AbrigoController {
     @Transactional
     public ResponseEntity<String> cadastrarPet(@PathVariable String idOuNome, @RequestBody @Valid Pet pet) {
         try {
-            Long id = Long.parseLong(idOuNome);
-            Abrigo abrigo = repository.getReferenceById(id);
-            pet.setAbrigo(abrigo);
-            pet.setAdotado(false);
-            abrigo.getPets().add(pet);
-            repository.save(abrigo);
+            service.cadastrarPetNoAbrigoById(idOuNome, pet);
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException enfe) {
             return ResponseEntity.notFound().build();
         } catch (NumberFormatException nfe) {
             try {
-                Abrigo abrigo = repository.findByNome(idOuNome);
-                pet.setAbrigo(abrigo);
-                pet.setAdotado(false);
-                abrigo.getPets().add(pet);
-                repository.save(abrigo);
+                service.cadastrarPetNoAbrigoByNome(idOuNome, pet);
                 return ResponseEntity.ok().build();
             } catch (EntityNotFoundException enfe) {
                 return ResponseEntity.notFound().build();
