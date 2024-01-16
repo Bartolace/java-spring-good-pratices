@@ -1,43 +1,63 @@
 package br.com.alura.adopet.api.service;
 
+import br.com.alura.adopet.api.dto.CadastroPetDTO;
+import br.com.alura.adopet.api.dto.PetDTO;
+import br.com.alura.adopet.api.dto.abrigo.AbrigoDTO;
+import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.AbrigoRepository;
+import br.com.alura.adopet.api.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AbrigoService {
 
     @Autowired
-    private AbrigoRepository repository;
+    private AbrigoRepository abrigoRepository;
 
-    public List<Pet> listarPetsPorId(String idOuNome){
-        Long id = Long.parseLong(idOuNome);
-        List<Pet> pets = repository.getReferenceById(id).getPets();
-        return pets;
+    @Autowired
+    private PetRepository petRepository;
+
+    @Autowired
+    private PetService petService;
+
+    public List<AbrigoDTO> listar(){
+        return abrigoRepository
+                .findAll()
+                .stream()
+                .map(AbrigoDTO::new)
+                .toList();
     }
 
-    public List<Pet> listarPetsPorNome(String idOuNome){
-        List<Pet> pets = repository.findByNome(idOuNome).getPets();
-        return pets;
+    public List<PetDTO> listarPetsAbrigo(String idOuNome){
+        Abrigo abrigo = carregarAbrigo(idOuNome);
+
+        return petRepository
+                .findByAbrigo(abrigo)
+                .stream()
+                .map(PetDTO::new)
+                .toList();
     }
 
-    public void cadastrarPetNoAbrigoById(String idOuNome, Pet pet){
-        Long id = Long.parseLong(idOuNome);
-        Abrigo abrigo = repository.getReferenceById(id);
-        pet.setAbrigo(abrigo);
-        pet.setAdotado(false);
-        abrigo.getPets().add(pet);
-        repository.save(abrigo);
+    public Abrigo carregarAbrigo(String idOuNome){
+        Optional<Abrigo> optional;
+        try {
+            Long id = Long.parseLong(idOuNome);
+            optional = abrigoRepository.findById(id);
+        }catch (NumberFormatException exception){
+            optional = abrigoRepository.findByNome(idOuNome);
+        }
+
+        return optional.orElseThrow(() -> new ValidacaoException("Abrigo não encontrado"));
     }
 
-    public void cadastrarPetNoAbrigoByNome(String idOuNome, Pet pet){
-        Abrigo abrigo = repository.findByNome(idOuNome);
-        pet.setAbrigo(abrigo);
-        pet.setAdotado(false);
-        abrigo.getPets().add(pet);
-        repository.save(abrigo);
+    public void cadastrarPetNoAbrigo(String idOuNome, CadastroPetDTO dto){
+        Abrigo abrigo = carregarAbrigo(idOuNome);
+        petService.cadastrasPet(abrigo, dto);
     }
 
 }
