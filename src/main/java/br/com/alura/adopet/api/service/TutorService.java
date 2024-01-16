@@ -6,14 +6,16 @@ import br.com.alura.adopet.api.model.Tutor;
 import br.com.alura.adopet.api.repository.TutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TutorService {
 
     @Autowired
     private TutorRepository repository;
 
     public void cadastrar(TutorDTO tutor){
-        boolean jaCadastrado = repository.existsByTelefoneOrEmail(tutor);
+        boolean jaCadastrado = repository.existsByTelefoneOrEmail(tutor.telefone(), tutor.email());
         if (jaCadastrado) {
             throw new ValidacaoException("Dados já cadastrados para outro tutor!");
         } else {
