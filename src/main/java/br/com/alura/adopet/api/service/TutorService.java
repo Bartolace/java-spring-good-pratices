@@ -8,11 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TutorService {
 
     @Autowired
     private TutorRepository repository;
+
+    public List<TutorDTO> listar(){
+        return repository.findAll()
+                .stream()
+                .map(TutorDTO::new)
+                .toList();
+    }
 
     public void cadastrar(TutorDTO tutor){
         boolean jaCadastrado = repository.existsByTelefoneOrEmail(tutor.telefone(), tutor.email());

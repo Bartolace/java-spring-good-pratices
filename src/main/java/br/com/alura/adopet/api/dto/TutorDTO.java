@@ -16,4 +16,7 @@ public record TutorDTO(
         @Email
         String email
 ) {
+        public TutorDTO(Tutor tutor) {
+                this(tutor.getId(), tutor.getNome(), tutor.getEmail(), tutor.getTelefone());
+        }
 }

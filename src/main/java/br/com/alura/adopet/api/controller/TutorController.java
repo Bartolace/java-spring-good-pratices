@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tutores")
 public class TutorController {
@@ -19,6 +21,15 @@ public class TutorController {
 
     @Autowired
     private TutorService service;
+
+    @GetMapping
+    public ResponseEntity<List<TutorDTO>> listar(){
+        try{
+            return ResponseEntity.ok(service.listar());
+        }catch (ValidacaoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PostMapping
     @Transactional
