@@ -1,12 +1,10 @@
 package br.com.alura.adopet.api.dto;
 
-import br.com.alura.adopet.api.model.Tutor;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record TutorDTO(
-        Long Id,
+public record CadastroTutorDto(
         @NotBlank
         String nome,
         @NotBlank
@@ -14,9 +12,5 @@ public record TutorDTO(
         String telefone,
         @NotBlank
         @Email
-        String email
-) {
-        public TutorDTO(Tutor tutor) {
-                this(tutor.getId(), tutor.getNome(), tutor.getEmail(), tutor.getTelefone());
-        }
+        String email) {
 }

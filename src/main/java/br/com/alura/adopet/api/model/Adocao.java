@@ -15,10 +15,10 @@ public class Adocao {
 
     private LocalDateTime data;
 
-    @ManyToOne(fetch =  FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Tutor tutor;
 
-    @OneToOne(fetch =  FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Pet pet;
 
     private String motivo;
@@ -28,8 +28,6 @@ public class Adocao {
 
     private String justificativaStatus;
 
-    public Adocao() {}
-
     public Adocao(Tutor tutor, Pet pet, String motivo) {
         this.tutor = tutor;
         this.pet = pet;
@@ -37,6 +35,8 @@ public class Adocao {
         this.status = StatusAdocao.AGUARDANDO_AVALIACAO;
         this.data = LocalDateTime.now();
     }
+
+    public Adocao(){}
 
     @Override
     public boolean equals(Object o) {
@@ -67,6 +67,10 @@ public class Adocao {
         return pet;
     }
 
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
+
     public String getMotivo() {
         return motivo;
     }
@@ -79,11 +83,11 @@ public class Adocao {
         return justificativaStatus;
     }
 
-    public void marcarComoAprovado() {
+    public void marcarComoAprovada() {
         this.status = StatusAdocao.APROVADO;
     }
 
-    public void marcarComoReprovado(String justificativa) {
+    public void marcarComoReprovada(String justificativa) {
         this.status = StatusAdocao.REPROVADO;
         this.justificativaStatus = justificativa;
     }
