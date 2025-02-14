@@ -32,12 +32,10 @@ class AbrigoServiceTest {
 
     @Test
     void deveCadastrarAbrigo() {
-        //arrange
         this.dto = new CadastroAbrigoDto("Abrigo1", "6791031805", "exemplo@hotmai.com");
 
-        //act
         service.cadastrar(dto);
-        //assert
+
         BDDMockito.then(repository).should().save(abrigoArgumentCaptor.capture());
         Abrigo abrigoSalvo = abrigoArgumentCaptor.getValue();
         assertEquals(dto.nome(), abrigoSalvo.getNome());
