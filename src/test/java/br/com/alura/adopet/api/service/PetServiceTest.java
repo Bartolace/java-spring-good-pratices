@@ -1,16 +1,16 @@
 package br.com.alura.adopet.api.service;
 
-import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
 import br.com.alura.adopet.api.dto.CadastroPetDto;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.model.TipoPet;
 import br.com.alura.adopet.api.repository.PetRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +28,9 @@ class PetServiceTest {
 
     @Captor
     private ArgumentCaptor<Pet> petCaptor;
+
+    @Mock
+    private List<Pet> petList;
 
     private CadastroPetDto dto;
 
@@ -49,4 +52,10 @@ class PetServiceTest {
         assertEquals(dto.peso(), petSalvo.getPeso());
         assertEquals(abrigo,    petSalvo.getAbrigo());
     }
+
+    @Test
+    void deveListarPetsDisponiveis(){
+        BDDMockito.given(repository.findAllByAdotadoFalse()).willReturn(petList);
+    }
+
 }
