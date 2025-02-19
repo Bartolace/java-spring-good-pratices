@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.awt.desktop.SystemEventListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,11 +33,16 @@ class PetServiceTest {
     @Captor
     private ArgumentCaptor<Pet> petCaptor;
 
-    @Captor
-    private ArgumentCaptor<PetDto> petDtoListCaptor;
+    @Spy
+    private List<Pet> petList = new ArrayList<>();
 
-//    @Spy
-//    private
+    @Mock
+    private Pet pet1;
+
+    @Mock
+    private Pet pet2;
+
+
 
     private CadastroPetDto dto;
 
@@ -44,6 +51,7 @@ class PetServiceTest {
 
         this.dto = new CadastroPetDto(
                 TipoPet.CACHORRO, "Cachorro", "Pastor Alemão", 2, "Caramelo", 8F);
+
 
         service.cadastrarPet(abrigo,this.dto);
 
@@ -55,22 +63,20 @@ class PetServiceTest {
         assertEquals(dto.idade(), petSalvo.getIdade());
         assertEquals(dto.cor(), petSalvo.getCor());
         assertEquals(dto.peso(), petSalvo.getPeso());
-        assertEquals(abrigo,    petSalvo.getAbrigo());
+        assertEquals(abrigo, petSalvo.getAbrigo());
     }
 
     @Test
     void deveListarPetsDisponiveis(){
-        //arrange
-        BDDMockito.given(repository.findAllByAdotadoFalse()).willReturn((List<Pet>) petDtoListCaptor);
-        //act
-        service.buscarPetsDisponiveis();
+        petList.add(pet1);
+        petList.add(pet2);
+        BDDMockito.given(repository.findAllByAdotadoFalse()).willReturn(petList);
 
-        //assert
-        BDDMockito.then(repository).should().findAllByAdotadoFalse(petDtoListCaptor.capture());
+        List<PetDto> result = service.buscarPetsDisponiveis();
 
-        List<PetDto> result = petDtoListCaptor.getAllValues();
-        Assertions.assertEquals();
-
+        BDDMockito.then(repository).should().findAllByAdotadoFalse();
+        assertEquals(false, result.isEmpty());
+        assertEquals(2,result.size());
     }
 
 }
