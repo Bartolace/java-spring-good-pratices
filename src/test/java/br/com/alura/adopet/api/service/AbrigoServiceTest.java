@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +33,7 @@ class AbrigoServiceTest {
 
 
     @Test
-    void deveCadastrarAbrigo() {
+    public void deveCadastrarAbrigo() {
         this.dto = new CadastroAbrigoDto("Abrigo1", "6791031805", "exemplo@hotmai.com");
 
         service.cadastrar(dto);
@@ -44,7 +46,7 @@ class AbrigoServiceTest {
     }
 
     @Test
-    void deveRetornarErroJaCadastradoAoCadastrarAbrigo(){
+    public void deveRetornarErroJaCadastradoAoCadastrarAbrigo(){
         this.dto = new CadastroAbrigoDto("Abrigo1", "6791031805", "exemplo@hotmai.com");
         BDDMockito.given(repository.existsByNomeOrTelefoneOrEmail(dto.nome(),dto.telefone(), dto.email())).willReturn(true);
 
@@ -52,11 +54,27 @@ class AbrigoServiceTest {
     }
 
     @Test
-    void naoDeveRetornarErroJaCadastradoAoCadastrarAbrigo(){
+    public void naoDeveRetornarErroJaCadastradoAoCadastrarAbrigo(){
         this.dto = new CadastroAbrigoDto("Abrigo1", "6791031805", "exemplo@hotmai.com");
         BDDMockito.given(repository.existsByNomeOrTelefoneOrEmail(dto.nome(),dto.telefone(), dto.email())).willReturn(false);
 
         assertDoesNotThrow(()-> service.cadastrar(dto));
     }
+
+    @Test
+    public void deveEncontrarAbrigoPorId() {
+        String id = "1";
+        Long idLong = Long.valueOf(id);
+        BDDMockito.given(repository.findById(idLong)).willReturn(Optional.of(abrigo));
+        BDDMockito.given(abrigo.getId()).willReturn(idLong);
+
+        Abrigo abrigoEncontrado = service.carregarAbrigo(id);
+
+        BDDMockito.then(repository).should().findById(idLong);
+        assertEquals(idLong, abrigoEncontrado.getId());
+        assertNotNull(abrigoEncontrado);
+    }
+
+
 
 }
