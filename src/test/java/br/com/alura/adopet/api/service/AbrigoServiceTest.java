@@ -75,6 +75,38 @@ class AbrigoServiceTest {
         assertNotNull(abrigoEncontrado);
     }
 
+    @Test
+    public void deveEncontrarAbrigoPorName() {
+        String nome = "exemplo abrigo";
+        BDDMockito.given(repository.findByNome(nome)).willReturn(Optional.of(abrigo));
+        BDDMockito.given(abrigo.getNome()).willReturn(nome);
+
+        Abrigo abrigoEncontrado = service.carregarAbrigo(nome);
+
+        BDDMockito.then(repository).should().findByNome(nome);
+        assertEquals(nome, abrigoEncontrado.getNome());
+        assertNotNull(abrigoEncontrado);
+    }
+
+    @Test
+    public void deveRetornarErroAbrigoNaoEncontradoPorId() {
+        String id = "1";
+        Long idLong = Long.valueOf(id);
+        BDDMockito.given(repository.findById(idLong)).willReturn(Optional.empty());
+
+        assertThrows(ValidacaoException.class, () -> service.carregarAbrigo(id));
+    }
+
+    @Test
+    public void deveRetornarErroAbrigoNaoEncontradoPorNome() {
+        String nome = "exemplo abrigo";
+        BDDMockito.given(repository.findByNome(nome)).willReturn(Optional.empty());
+
+        assertThrows(ValidacaoException.class, () -> service.carregarAbrigo(nome));
+    }
+
+
+
 
 
 }
