@@ -1,6 +1,7 @@
 package br.com.alura.adopet.api.service;
 
 import br.com.alura.adopet.api.dto.AprovacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.ReprovacaoAdocaoDto;
 import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDto;
 import br.com.alura.adopet.api.model.*;
 import br.com.alura.adopet.api.repository.AdocaoRepository;
@@ -8,7 +9,6 @@ import br.com.alura.adopet.api.repository.PetRepository;
 import br.com.alura.adopet.api.repository.TutorRepository;
 import br.com.alura.adopet.api.validacoes.ValidacaoPetDisponivel;
 import br.com.alura.adopet.api.validacoes.ValidacaoSolicitacaoAdocao;
-import net.minidev.asm.BasicFiledFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,17 +58,21 @@ class AdocaoServiceTest {
     @Captor
     private ArgumentCaptor<Adocao> adocaoCaptor;
 
-    @Mock
-    private Adocao adocao;
+    @Spy
+    private Adocao adocaoAprovada = new Adocao();
+
+    @Spy
+    private Adocao adocaoReprovada = new Adocao();
 
     @Mock
     private AprovacaoAdocaoDto aprovacaoAdocaoDto;
 
-    private SolicitacaoAdocaoDto dto;
+    @Mock
+    private ReprovacaoAdocaoDto reprovacaoAdocaoDto;
 
+    private SolicitacaoAdocaoDto dto = new SolicitacaoAdocaoDto(10l, 20l, "motivo qualquer");
     @Test
     void deveSalvarAdocaoAoSolitar() {
-        this.dto = new SolicitacaoAdocaoDto(10l, 20l, "motivo qualquer");
         BDDMockito.given(petRepository.getReferenceById(dto.idPet())).willReturn(pet);
         BDDMockito.given(tutorRepository.getReferenceById(dto.idTutor())).willReturn(tutor);
         BDDMockito.given(pet.getAbrigo()).willReturn(abrigo);
@@ -84,7 +88,6 @@ class AdocaoServiceTest {
 
     @Test
     void deveChamarValidadoresDeAdocaoSolicitar() {
-        this.dto = new SolicitacaoAdocaoDto(10l, 20l, "motivo qualquer");
         BDDMockito.given(petRepository.getReferenceById(dto.idPet())).willReturn(pet);
         BDDMockito.given(tutorRepository.getReferenceById(dto.idTutor())).willReturn(tutor);
         BDDMockito.given(pet.getAbrigo()).willReturn(abrigo);
@@ -100,17 +103,32 @@ class AdocaoServiceTest {
     @Test
     void deveAprovarAdocao() {
         LocalDateTime data = LocalDateTime.now();
-        BDDMockito.given(repository.getReferenceById(aprovacaoAdocaoDto.idAdocao())).willReturn(adocao);
-        BDDMockito.given(adocao.getPet()).willReturn(pet);
-        BDDMockito.given(adocao.getTutor()).willReturn(tutor);
-        BDDMockito.given(adocao.getPet().getAbrigo()).willReturn(abrigo);
-        BDDMockito.given(adocao.getData()).willReturn(data);
-        BDDMockito.given(adocao.getStatus()).willReturn(StatusAdocao.APROVADO);
+        BDDMockito.given(repository.getReferenceById(aprovacaoAdocaoDto.idAdocao())).willReturn(adocaoAprovada);
+        BDDMockito.given(adocaoAprovada.getPet()).willReturn(pet);
+        BDDMockito.given(adocaoAprovada.getTutor()).willReturn(tutor);
+        BDDMockito.given(adocaoAprovada.getPet().getAbrigo()).willReturn(abrigo);
+        BDDMockito.given(adocaoAprovada.getData()).willReturn(data);
+        BDDMockito.given(adocaoAprovada.getStatus()).willReturn(StatusAdocao.APROVADO);
 
         service.aprovar(aprovacaoAdocaoDto);
 
-        BDDMockito.then(adocao).should().marcarComoAprovada();
-        Assertions.assertEquals(StatusAdocao.APROVADO, adocao.getStatus());
+        BDDMockito.then(adocaoAprovada).should().marcarComoAprovada();
+        Assertions.assertEquals(StatusAdocao.APROVADO, adocaoAprovada.getStatus());
+    }
 
+    @Test
+    void deveReprovarAdocao() {
+        LocalDateTime data = LocalDateTime.now();
+        BDDMockito.given(repository.getReferenceById(reprovacaoAdocaoDto.idAdocao())).willReturn(adocaoReprovada);
+        BDDMockito.given(adocaoReprovada.getPet()).willReturn(pet);
+        BDDMockito.given(adocaoReprovada.getTutor()).willReturn(tutor);
+        BDDMockito.given(adocaoReprovada.getPet().getAbrigo()).willReturn(abrigo);
+        BDDMockito.given(adocaoReprovada.getData()).willReturn(data);
+        BDDMockito.given(adocaoReprovada.getStatus()).willReturn(StatusAdocao.REPROVADO);
+
+        service.reprovar(reprovacaoAdocaoDto);
+
+        BDDMockito.then(adocaoReprovada).should().marcarComoReprovada(reprovacaoAdocaoDto.justificativa());
+        Assertions.assertEquals(StatusAdocao.REPROVADO, adocaoReprovada.getStatus());
     }
 }
