@@ -19,8 +19,13 @@ public class PetController {
 
     @GetMapping
     public ResponseEntity<List<PetDto>> listarTodosDisponiveis() {
-        List<PetDto> pets = service.buscarPetsDisponiveis();
-        return ResponseEntity.ok(pets);
+        try{
+            List<PetDto> pets = service.buscarPetsDisponiveis();
+            return ResponseEntity.ok(pets);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
 }
