@@ -1,8 +1,8 @@
 package br.com.alura.adopet.api.service;
 
-import br.com.alura.adopet.api.dto.AprovacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.AprovacaoAdocaoDTO;
 import br.com.alura.adopet.api.dto.ReprovacaoAdocaoDto;
-import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDTO;
 import br.com.alura.adopet.api.model.Adocao;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.model.Tutor;
@@ -34,7 +34,7 @@ public class AdocaoService {
     @Autowired
     private List<ValidacaoSolicitacaoAdocao> validacoes;
 
-    public void solicitar(SolicitacaoAdocaoDto dto) {
+    public void solicitar(SolicitacaoAdocaoDTO dto) {
         Pet pet = petRepository.getReferenceById(dto.idPet());
         Tutor tutor = tutorRepository.getReferenceById(dto.idTutor());
 
@@ -49,7 +49,7 @@ public class AdocaoService {
                 "Olá " +adocao.getPet().getAbrigo().getNome() +"!\n\nUma solicitação de adoção foi registrada hoje para o pet: " +adocao.getPet().getNome() +". \nFavor avaliar para aprovação ou reprovação.");
     }
 
-    public void aprovar(AprovacaoAdocaoDto dto) {
+    public void aprovar(AprovacaoAdocaoDTO dto) {
         Adocao adocao = repository.getReferenceById(dto.idAdocao());
         adocao.marcarComoAprovada();
 

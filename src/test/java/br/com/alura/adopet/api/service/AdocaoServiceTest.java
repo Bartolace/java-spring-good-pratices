@@ -1,8 +1,8 @@
 package br.com.alura.adopet.api.service;
 
-import br.com.alura.adopet.api.dto.AprovacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.AprovacaoAdocaoDTO;
 import br.com.alura.adopet.api.dto.ReprovacaoAdocaoDto;
-import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDTO;
 import br.com.alura.adopet.api.model.*;
 import br.com.alura.adopet.api.repository.AdocaoRepository;
 import br.com.alura.adopet.api.repository.PetRepository;
@@ -65,12 +65,12 @@ class AdocaoServiceTest {
     private Adocao adocaoReprovada = new Adocao();
 
     @Mock
-    private AprovacaoAdocaoDto aprovacaoAdocaoDto;
+    private AprovacaoAdocaoDTO aprovacaoAdocaoDto;
 
     @Mock
     private ReprovacaoAdocaoDto reprovacaoAdocaoDto;
 
-    private SolicitacaoAdocaoDto dto = new SolicitacaoAdocaoDto(10l, 20l, "motivo qualquer");
+    private SolicitacaoAdocaoDTO dto = new SolicitacaoAdocaoDTO(10l, 20l, "motivo qualquer");
     @Test
     void deveSalvarAdocaoAoSolitar() {
         BDDMockito.given(petRepository.getReferenceById(dto.idPet())).willReturn(pet);

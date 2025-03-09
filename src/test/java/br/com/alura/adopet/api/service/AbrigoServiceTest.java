@@ -1,15 +1,21 @@
 package br.com.alura.adopet.api.service;
 
+import br.com.alura.adopet.api.dto.AbrigoDto;
 import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
+import br.com.alura.adopet.api.dto.PetDTO;
 import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Abrigo;
+import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.AbrigoRepository;
+import br.com.alura.adopet.api.repository.PetRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,13 +29,35 @@ class AbrigoServiceTest {
     @Mock
     private AbrigoRepository repository;
 
+    @Mock
+    private PetRepository petRepository;
+
+    @Spy
+    private List<Pet> petList = new ArrayList<>();
+
+    @Mock
+    private Pet pet1;
+
+    @Mock
+    private  Pet pet2;
+
     @Captor
     private ArgumentCaptor<Abrigo> abrigoArgumentCaptor;
 
     @Mock
     private Abrigo abrigo;
 
+    @Mock
+    private  Abrigo abrigo2;
+
     private CadastroAbrigoDto dto;
+
+    private List<AbrigoDto> abrigoDtoList;
+
+
+    @Test
+    public void deveListarAbrigos() {
+    }
 
 
     @Test
@@ -103,6 +131,21 @@ class AbrigoServiceTest {
         BDDMockito.given(repository.findByNome(nome)).willReturn(Optional.empty());
 
         assertThrows(ValidacaoException.class, () -> service.carregarAbrigo(nome));
+    }
+
+    @Test
+    public void deveListarPetsPorAbrigo(){
+        String nome = "Abrigo1";
+        petList.add(pet1);
+        petList.add(pet2);
+        BDDMockito.given(repository.findByNome(nome)).willReturn(Optional.of(abrigo));
+        BDDMockito.given(petRepository.findByAbrigo(abrigo)).willReturn(petList);
+
+        List<PetDTO> result = service.listarPetsDoAbrigo(nome);
+
+        BDDMockito.then(petRepository).should().findByAbrigo(abrigo);
+        assertEquals(false, result.isEmpty());
+        assertEquals(2, result.size());
     }
 
 

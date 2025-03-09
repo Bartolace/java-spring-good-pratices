@@ -1,18 +1,16 @@
 package br.com.alura.adopet.api.service;
 
-import br.com.alura.adopet.api.dto.CadastroPetDto;
-import br.com.alura.adopet.api.dto.PetDto;
+import br.com.alura.adopet.api.dto.CadastroPetDTO;
+import br.com.alura.adopet.api.dto.PetDTO;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.model.TipoPet;
 import br.com.alura.adopet.api.repository.PetRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.awt.desktop.SystemEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +42,12 @@ class PetServiceTest {
 
 
 
-    private CadastroPetDto dto;
+    private CadastroPetDTO dto;
 
     @Test
     void cadastrarPet() {
 
-        this.dto = new CadastroPetDto(
+        this.dto = new CadastroPetDTO(
                 TipoPet.CACHORRO, "Cachorro", "Pastor Alemão", 2, "Caramelo", 8F);
 
 
@@ -72,7 +70,7 @@ class PetServiceTest {
         petList.add(pet2);
         BDDMockito.given(repository.findAllByAdotadoFalse()).willReturn(petList);
 
-        List<PetDto> result = service.buscarPetsDisponiveis();
+        List<PetDTO> result = service.buscarPetsDisponiveis();
 
         BDDMockito.then(repository).should().findAllByAdotadoFalse();
         assertEquals(false, result.isEmpty());

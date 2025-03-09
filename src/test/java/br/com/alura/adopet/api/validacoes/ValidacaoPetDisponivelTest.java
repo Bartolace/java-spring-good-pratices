@@ -1,6 +1,6 @@
 package br.com.alura.adopet.api.validacoes;
 
-import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDTO;
 import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.PetRepository;
@@ -11,8 +11,6 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class ValidacaoPetDisponivelTest {
@@ -27,7 +25,7 @@ class ValidacaoPetDisponivelTest {
     private Pet pet;
 
     @Mock
-    private SolicitacaoAdocaoDto dto;
+    private SolicitacaoAdocaoDTO dto;
 
     @Test
     void devePermitirAdocaoPet() {

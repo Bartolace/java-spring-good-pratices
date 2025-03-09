@@ -1,6 +1,6 @@
 package br.com.alura.adopet.api.validacoes;
 
-import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDto;
+import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDTO;
 import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.StatusAdocao;
 import br.com.alura.adopet.api.repository.AdocaoRepository;
@@ -24,7 +24,7 @@ class ValidacaoTutorComLimiteDeAdocoesTest {
     private AdocaoRepository adocaoRepository;
 
     @Mock
-    private SolicitacaoAdocaoDto dto;
+    private SolicitacaoAdocaoDTO dto;
 
     @Test
     void deveGarantirTutorAtingiuLimiteDe5Adocoes() {

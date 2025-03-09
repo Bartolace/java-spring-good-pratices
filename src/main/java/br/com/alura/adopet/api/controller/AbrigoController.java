@@ -2,8 +2,8 @@ package br.com.alura.adopet.api.controller;
 
 import br.com.alura.adopet.api.dto.AbrigoDto;
 import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
-import br.com.alura.adopet.api.dto.CadastroPetDto;
-import br.com.alura.adopet.api.dto.PetDto;
+import br.com.alura.adopet.api.dto.CadastroPetDTO;
+import br.com.alura.adopet.api.dto.PetDTO;
 import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.service.AbrigoService;
@@ -28,8 +28,12 @@ public class AbrigoController {
 
     @GetMapping
     public ResponseEntity<List<AbrigoDto>> listar() {
-        List<AbrigoDto> abrigos = abrigoService.listar();
-        return ResponseEntity.ok(abrigos);
+        try{
+            List<AbrigoDto> abrigos = abrigoService.listar();
+            return ResponseEntity.ok(abrigos);
+        } catch (ValidacaoException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -44,9 +48,9 @@ public class AbrigoController {
     }
 
     @GetMapping("/{idOuNome}/pets")
-    public ResponseEntity<List<PetDto>> listarPets(@PathVariable String idOuNome) {
+    public ResponseEntity<List<PetDTO>> listarPets(@PathVariable String idOuNome) {
         try {
-            List<PetDto> petsDoAbrigo = abrigoService.listarPetsDoAbrigo(idOuNome);
+            List<PetDTO> petsDoAbrigo = abrigoService.listarPetsDoAbrigo(idOuNome);
             return ResponseEntity.ok(petsDoAbrigo);
         } catch (ValidacaoException exception) {
             return ResponseEntity.notFound().build();
@@ -55,7 +59,7 @@ public class AbrigoController {
 
     @PostMapping("/{idOuNome}/pets")
     @Transactional
-    public ResponseEntity<String> cadastrarPet(@PathVariable String idOuNome, @RequestBody @Valid CadastroPetDto dto) {
+    public ResponseEntity<String> cadastrarPet(@PathVariable String idOuNome, @RequestBody @Valid CadastroPetDTO dto) {
         try {
             Abrigo abrigo = abrigoService.carregarAbrigo(idOuNome);
             petService.cadastrarPet(abrigo, dto);
