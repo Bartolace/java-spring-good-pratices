@@ -38,6 +38,11 @@ class TutorServiceTest {
         assertEquals(dto.nome(), tutorSalvo.getNome());
         assertEquals(dto.telefone(), tutorSalvo.getTelefone());
         assertEquals(dto.email(), tutorSalvo.getEmail());
+
+        //outra maneira ----
+        //given(repository.existsByTelefoneOrEmail(dto.telefone(),dto.email())).willReturn(false);
+        //assertDoesNotThrow(() -> service.cadastrar(dto));
+        //then(repository).should().save(new Tutor(dto));
     }
 
     @Test

@@ -62,6 +62,9 @@ class PetServiceTest {
         assertEquals(dto.cor(), petSalvo.getCor());
         assertEquals(dto.peso(), petSalvo.getPeso());
         assertEquals(abrigo, petSalvo.getAbrigo());
+
+        //service.cadastrarPer(abrigo, cadastroPetDTO);
+        //then.(repository).should().save(new Pet(cadastroPetDTO, abrigo));
     }
 
     @Test
