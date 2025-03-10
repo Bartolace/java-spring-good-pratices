@@ -65,7 +65,7 @@ public class AbrigoController {
             petService.cadastrarPet(abrigo, dto);
             return ResponseEntity.ok().build();
         } catch (ValidacaoException exception) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
         }
     }
 

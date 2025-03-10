@@ -23,7 +23,7 @@ public class PetController {
             List<PetDTO> pets = service.buscarPetsDisponiveis();
             return ResponseEntity.ok(pets);
         }catch (Exception e){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
     }

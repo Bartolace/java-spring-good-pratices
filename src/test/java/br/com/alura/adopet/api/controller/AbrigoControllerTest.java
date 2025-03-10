@@ -116,7 +116,7 @@ class AbrigoControllerTest {
     }
 
     @Test
-    public void deveRetornarStatus400AoListarPetsDoAbrigoComErros() throws Exception {
+    public void deveRetornarStatus404AoListarPetsDoAbrigoComErros() throws Exception {
         BDDMockito.given(abrigoService.listarPetsDoAbrigo("1")).willThrow(new ValidacaoException("Abrigo não encontrado"));
 
         MockHttpServletResponse response = mvc.perform(
@@ -128,7 +128,7 @@ class AbrigoControllerTest {
     }
 
     @Test
-    public void deveRetornar200AoCadastraPetSemErros() throws Exception {
+    public void deveRetornar200AoCadastrarPetSemErros() throws Exception {
         String json = """
                 {
                     "id": 1,
@@ -151,7 +151,7 @@ class AbrigoControllerTest {
     }
 
     @Test
-    public void deveRetornar400AoCadastraPetComErros() throws Exception {
+    public void deveRetornar400AoCadastrarPetComErros() throws Exception {
         String json = "{}";
 
         MockHttpServletResponse response = mvc.perform(

@@ -40,15 +40,15 @@ class PetControllerTest {
     }
 
     @Test
-    void deveRetornar400AolistarTodosDisponiveis() throws Exception {
+    void deveRetornar404AolistarTodosDisponiveis() throws Exception {
 
-        BDDMockito.given(service.buscarPetsDisponiveis())
-                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        BDDMockito.given(service.buscarPetsDisponiveis()).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
         MockHttpServletResponse response = mvc.perform(
                 get("/pets")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
-        Assertions.assertEquals(400, response.getStatus());
+        Assertions.assertEquals(404, response.getStatus());
     }
 }

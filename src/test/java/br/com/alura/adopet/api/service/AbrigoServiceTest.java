@@ -57,6 +57,15 @@ class AbrigoServiceTest {
 
     @Test
     public void deveListarAbrigos() {
+        abrigoDtoList = new ArrayList<>();
+        abrigoDtoList.add(new AbrigoDto(abrigo));
+        abrigoDtoList.add(new AbrigoDto(abrigo2));
+        BDDMockito.given(repository.findAll()).willReturn(List.of(abrigo, abrigo2));
+
+        List<AbrigoDto> result = service.listar();
+
+        BDDMockito.then(repository).should().findAll();
+        assertEquals(abrigoDtoList.size(), result.size());
     }
 
 
