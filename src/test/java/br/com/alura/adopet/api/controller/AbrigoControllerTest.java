@@ -5,11 +5,9 @@ import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.service.AbrigoService;
 import br.com.alura.adopet.api.service.PetService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -102,9 +99,23 @@ class AbrigoControllerTest {
     }
 
     @Test
-    public void deveRetornarStatus200AoListarPetsDoAbrigoSemErros() throws Exception {
+    public void deveRetornarStatus200AoListarPetsDoAbrigoSemErrosPorId() throws Exception {
         List<PetDTO> pets = List.of(new PetDTO(pet1), new PetDTO(pet2));
         BDDMockito.given(abrigoService.listarPetsDoAbrigo("1")).willReturn(pets);
+
+        MockHttpServletResponse response = mvc.perform(
+                get("/abrigos/1/pets")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(200, response.getStatus());
+        assertEquals(2, pets.size());
+    }
+
+    @Test
+    public void deveRetornarStatus200AoListarPetsDoAbrigoSemErrosPorNome() throws Exception {
+        List<PetDTO> pets = List.of(new PetDTO(pet1), new PetDTO(pet2));
+        BDDMockito.given(abrigoService.listarPetsDoAbrigo("Nome")).willReturn(pets);
 
         MockHttpServletResponse response = mvc.perform(
                 get("/abrigos/1/pets")
@@ -125,6 +136,7 @@ class AbrigoControllerTest {
         ).andReturn().getResponse();
 
         assertEquals(404, response.getStatus());
+
     }
 
     @Test

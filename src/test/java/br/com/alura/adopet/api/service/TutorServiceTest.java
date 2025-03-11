@@ -1,5 +1,6 @@
 package br.com.alura.adopet.api.service;
 
+import br.com.alura.adopet.api.dto.AtualizacaoTutorDto;
 import br.com.alura.adopet.api.dto.CadastroAbrigoDto;
 import br.com.alura.adopet.api.dto.CadastroTutorDto;
 import br.com.alura.adopet.api.exception.ValidacaoException;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.security.PrivateKey;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +27,12 @@ class TutorServiceTest {
 
     @Captor
     private ArgumentCaptor<Tutor> tutorCaptor;
+
+    @Mock
+    private Tutor tutor;
+
+    @Mock
+    private AtualizacaoTutorDto atualizacaoTutorDto;
 
     private CadastroTutorDto dto;
 
@@ -59,5 +68,12 @@ class TutorServiceTest {
         BDDMockito.given(repository.existsByTelefoneOrEmail(dto.telefone(),dto.email())).willReturn(false);
 
         Assertions.assertDoesNotThrow(() -> service.cadastrar(dto));
+    }
+
+    @Test
+    public void deveAtualizarDadosTutor() {
+        BDDMockito.given(repository.getReferenceById(atualizacaoTutorDto.id())).willReturn(tutor);
+        service.atualizar(atualizacaoTutorDto);
+        BDDMockito.then(tutor).should().atualizarDados(atualizacaoTutorDto);
     }
 }
